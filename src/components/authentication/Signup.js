@@ -17,7 +17,6 @@ const Signup = () => {
 
 	const postDetails = async (pics) => {
 		setLoading(true)
-		//https://api.cloudinary.com/v1_1/dnq17j1cj
 		if (!pics) {
 			toast({
 				title: "Please select an image!",
