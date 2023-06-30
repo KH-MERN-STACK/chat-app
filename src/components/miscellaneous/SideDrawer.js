@@ -13,6 +13,7 @@ import {
 	MenuDivider,
 	MenuItem,
 	MenuList,
+	Spinner,
 	Text,
 	Tooltip,
 	useToast,
@@ -31,7 +32,7 @@ const SideDrawer = () => {
 	const [searchResult, setSearchResult] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [loadingChats, setLoadingChats] = useState()
-	const { user } = ChatState()
+	const { user, setSelectedChat, selectedChat, chats, setChats } = ChatState()
 	const history = useHistory()
 	const toast = useToast()
 	const { isOpen, onOpen, onClose } = useDisclosure()
@@ -74,8 +75,30 @@ const SideDrawer = () => {
 		setLoading(false)
 	}
 
-	const accessChat = (userId) => {
-
+	const accessChat = async (userId) => {
+		setLoadingChats(true)
+		try {
+			const config = {
+				headers: {
+					"content-type": "application/json",
+					Authorization: `Bearer ${user.token}`,
+				},
+			}
+			const { data } = await axios.post("/api/chats", { userId }, config)
+			console.log(data)
+			setSelectedChat(data)
+			onClose()
+		} catch (err) {
+			toast({
+				title: "Error fetching chat",
+				description: err.message,
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+				position: "bottom-left",
+			})
+		}
+		setLoadingChats(false)
 	}
 	return (
 		<>
@@ -134,6 +157,7 @@ const SideDrawer = () => {
 							<Button onClick={searchHandler}>Go</Button>
 						</Box>
 						{loading ? <ChatLoading /> : searchResult?.map((user) => <UserListItem key={user._id} user={user} handleFunction={() => accessChat(user._id)} />)}
+						{loadingChats && <Spinner ml="auto" display={"flex"} />}
 					</DrawerBody>
 				</DrawerContent>
 			</Drawer>

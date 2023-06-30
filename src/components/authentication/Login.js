@@ -39,7 +39,7 @@ const Login = () => {
 					},
 				}
 			)
-			console.log(res)
+			console.log(res.data)
 			toast({
 				title: "Registeration Sucessful",
 				status: "success",
@@ -52,7 +52,7 @@ const Login = () => {
 		} catch (err) {
 			toast({
 				title: "Errr occurred",
-				description: err.response.data.message,
+				description: err.message,
 				status: "error",
 				duration: 5000,
 				isClosable: true,
